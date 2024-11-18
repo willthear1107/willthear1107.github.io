@@ -1,0 +1,25 @@
+name: Build and Deploy
+on:
+    push:
+        tags:
+            - 'v*'
+
+env:
+  VITE_GAS_URL: ${{ vars.VITE_GAS_URL }}
+  VITE_CDN_PORTFOLIO_BASE_URL: ${{ vars.VITE_CDN_PORTFOLIO_BASE_URL }}
+  VITE_BACKEND_BASE_URL: ${{ vars.VITE_BACKEND_BASE_URL }}
+
+jobs:
+    build-and-deploy:
+        concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout 🛎️
+              uses: actions/checkout@v3
+            - name: Install and Build 🔧
+              run: yarn && yarn build
+            - name: Deploy 🚀
+              uses: JamesIves/github-pages-deploy-action@v4.3.3
+              with:
+                  branch: gh-pages
+                  folder: dist
